@@ -1,0 +1,83 @@
+
+
+Folder Structure (for deployment)
+
+project-folder/
+├── app.py
+├── requirements.txt
+├── templates/
+│   ├── index.html
+│   └── results.html
+
+
+---
+
+Step 1: Create requirements.txt
+
+Flask==2.3.3
+pandas==2.2.1
+mlxtend==0.23.1
+
+
+---
+
+Step 2: Create render.yaml (for automatic deploy)
+
+services:
+  - type: web
+    name: association-rule-app
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
+
+
+---
+
+Step 3: Update app.py for production (optional)
+
+At the end of app.py, change:
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+to:
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
+
+
+---
+
+Step 4: Push to GitHub
+
+1. Create a GitHub repo.
+
+
+2. Push your project files.
+
+
+
+
+---
+
+Step 5: Deploy on Render
+
+1. Go to https://render.com
+
+
+2. Sign in > New Web Service > Connect your GitHub repo.
+
+
+3. Choose Python as runtime.
+
+
+4. Set the build and start commands:
+
+Build: pip install -r requirements.txt
+
+Start: python app.py
+
+
+
+
+It will give you a live **public
