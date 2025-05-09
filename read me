@@ -1,0 +1,45 @@
+# Retail Optimization Using Association Rule Mining
+
+This project analyzes customer purchasing behavior using **Association Rule Mining (ARM)** techniques to provide actionable insights for retailers. It focuses on discovering frequently bought-together product combinations to optimize store layout, promotions, inventory, and recommendations.
+
+## Project Owner
+- **Student Name:** V.J. Kavipriya  
+- **Register Number:** 422523104045  
+- **Institution:** University College Of Engineering, Villupuram  
+- **Department:** Information Technology  
+- **Date of Submission:** 06-05-2025  
+
+## GitHub Repository
+[Visit Repository](https://github.com/kavipriyavj/projects-phase-3-kavipriya-)
+
+---
+
+## Project Objectives
+- Discover frequent itemsets in transaction data.
+- Generate association rules using Apriori algorithm.
+- Recommend product bundling and shelf optimization.
+- Enhance targeted promotions using data-driven insights.
+- Improve stock planning and customer satisfaction.
+
+---
+
+## Dataset
+- **Name:** Online Retail Dataset  
+- **Source:** UCI Machine Learning Repository / Kaggle  
+- **Size:** ~541,909 transactions, 8 features  
+- **Data Type:** Structured (CSV)
+
+---
+
+## Tools & Technologies
+- **Languages:** Python (Flask backend)
+- **Libraries:** pandas, mlxtend, matplotlib, seaborn, scikit-learn
+- **IDE:** Jupyter Notebook
+- **Dashboard:** Power BI / Plotly Dash
+- **Visualization Tools:** Matplotlib, Seaborn, NetworkX
+
+---
+
+## Project Structure
+- `app.py` – Flask web application for uploading CSV files and analyzing association rules.
+- `templates/`
