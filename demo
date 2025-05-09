@@ -1,0 +1,153 @@
+
+
+✅ DEMO FILES
+
+
+---
+
+1. app.py (Main backend logic)
+
+from flask import Flask, render_template, request
+import pandas as pd
+from mlxtend.frequent_patterns import apriori, association_rules
+import os
+
+app = Flask(__name__)
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# Function to preprocess transaction data
+def preprocess_data(df):
+    transactions = df['Items'].apply(lambda x: x.split(','))
+    all_items = sorted({item.strip() for sublist in transactions for item in sublist})
+    encoded_rows = []
+    for items in transactions:
+        row = {item: (item in [i.strip() for i in items]) for item in all_items}
+        encoded_rows.append(row)
+    return pd.DataFrame(encoded_rows)
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        file = request.files['file']
+        if file:
+            df = pd.read_csv(file)
+            basket_df = preprocess_data(df)
+
+            # Apriori algorithm
+            frequent_itemsets = apriori(basket_df, min_support=0.2, use_colnames=True)
+            rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1.0)
+            rules = rules[rules['confidence'] >= 0.5]
+
+            rules = rules[['antecedents', 'consequents', 'support', 'confidence', 'lift']]
+            rules['antecedents'] = rules['antecedents'].apply(lambda x: ', '.join(list(x)))
+            rules['consequents'] = rules['consequents'].apply(lambda x: ', '.join(list(x)))
+
+            return render_template('results.html', tables=rules.to_dict(orient='records'))
+
+    return render_template('index.html')
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+---
+
+2. templates/index.html
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Transaction CSV</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Upload Transaction File</h2>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <input type="file" name="file" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Analyze</button>
+    </form>
+</div>
+</body>
+</html>
+
+
+---
+
+3. templates/results.html
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Association Rules</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Association Rules</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Antecedents</th>
+                <th>Consequents</th>
+                <th>Support</th>
+                <th>Confidence</th>
+                <th>Lift</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in tables %}
+            <tr>
+                <td>{{ row['antecedents'] }}</td>
+                <td>{{ row['consequents'] }}</td>
+                <td>{{ '%.2f'|format(row['support']) }}</td>
+                <td>{{ '%.2f'|format(row['confidence']) }}</td>
+                <td>{{ '%.2f'|format(row['lift']) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="/" class="btn btn-secondary">Go Back</a>
+</div>
+</body>
+</html>
+
+
+---
+
+4. Sample CSV File (demo_input.csv)
+
+Items
+Bread,Butter,Jam
+Milk,Cereal,Sugar
+Bread,Butter
+Milk,Jam,Cereal
+Butter,Jam,Sugar
+
+
+---
+
+How to Run the Demo
+
+1. Save the above files in a project folder.
+
+
+2. In terminal, install the required packages:
+
+
+
+pip install flask pandas mlxtend
+
+3. Run the app:
+
+
+
+python app.py
+
+4. Open your browser and go to: http://127.0.0.1:5000/
+
+
+5. Upload the demo_input.csv and view the results.
